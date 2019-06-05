@@ -2,11 +2,12 @@
 
 Server was designed with aync/await mindset and with at aim at performance (TBD).
 """
-
 from aiohttp import web
 import os
+import ssl
 import sys
 import aiohttp_cors
+import distutils.util
 
 from .api.info import beacon_info, ga4gh_info
 from .api.query import query_request_handler
@@ -114,13 +115,20 @@ def main():
 
     At start also initialize a PostgreSQL connection pool.
     """
-    # TO DO make it HTTPS and request certificate
-    # sslcontext.load_cert_chain(ssl_certfile, ssl_keyfile)
-    # sslcontext = ssl.create_default_context(ssl.Purpose.CLIENT_AUTH)
-    # sslcontext.check_hostname = False
+    if distutils.util.strtobool(os.environ.get('SECURE', 'false')):
+        ssl_certfile = os.environ.get('PATH_SSL_CERT_FILE',  '/etc/ssl/certs/cert.pem')
+        ssl_keyfile = os.environ.get('PATH_SSL_KEY_FILE', '/etc/ssl/certs/key.pem')
+        ca = os.environ.get('PATH_SSL_CA_FILE', '/etc/ssl/certs/ca.pem')
+        sslcontext = ssl.create_default_context(ssl.Purpose.CLIENT_AUTH)
+        sslcontext.verify_mode = ssl.CERT_REQUIRED
+        sslcontext.load_cert_chain(ssl_certfile, ssl_keyfile)
+        sslcontext.load_verify_locations(cafile=ca)
+    else:
+        sslcontext = None
+
     web.run_app(init(), host=os.environ.get('HOST', '0.0.0.0'),
                 port=os.environ.get('PORT', '5050'),
-                shutdown_timeout=0, ssl_context=None)
+                shutdown_timeout=0, ssl_context=sslcontext)
 
 
 if __name__ == '__main__':
