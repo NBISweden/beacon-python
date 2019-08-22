@@ -69,7 +69,7 @@ async def query_request_handler(params):
     # Fills the Beacon variable with the found data.
     alleleRequest = {'referenceName': request.get("referenceName"),
                      'referenceBases': request.get("referenceBases"),
-                     'assemblyId': request.get("assemblyId"),
+                     'assemblyId': "19", #request.get("assemblyId"),
                      'includeDatasetResponses': request.get("includeDatasetResponses", "NONE")}
     # include datasetIds only if they are specified
     # as per specification if they don't exist all datatsets will be queried

@@ -84,7 +84,7 @@ async def beacon_info(host, pool):
     beacon_info = {
         # TO DO implement some fallback mechanism for ID
         'id': '.'.join(reversed(host.split('.'))),
-        'name': __title__,
+        # 'name': __title__,
         'apiVersion': __apiVersion__,
         'organization': organization,
         'description': __description__,
