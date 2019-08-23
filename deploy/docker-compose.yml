@@ -24,3 +24,17 @@ services:
     ports:
       - 5050:5050
     restart: on-failure
+  beacon-fail:
+    hostname: beacon
+    build:
+      context: ./
+      dockerfile: Dockerfile-failing
+    depends_on:
+      - postgres
+    environment:
+      DATABASE_URL: postgres
+    links:
+    - postgres:postgres
+    ports:
+      - 5051:5050
+    restart: on-failure
